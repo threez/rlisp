@@ -1,0 +1,26 @@
+This is an simple LISP-interpreter witten in Ruby.
+Given a Lisp Expression like this:
+
+  (+ (* 3 4) 2)
+
+the Lexer will produce:
+
+  [:+ [:* 3 4] 2]
+
+Ruby symbols are LISP atoms and arrays are lists.
+
+The interpreter evals the whole list and executes the apply method
+on the functions.
+
+The build-in functions are the functions that are attached to the interpreter
+class. To bootstrapp the interpreter the Core and Math modules (of helper.rb)
+are included in the interpreter class. This makes Ruby integration rather
+simple.
+
+Start the Interpreter using this scheme:
+
+	l = Lisp::Lexer.new
+	p = Lisp::Parser.new
+	l.tokenize("test.lisp", p)
+	i = Lisp::Interpreter.new
+	i.start p.node

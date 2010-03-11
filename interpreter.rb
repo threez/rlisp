@@ -80,8 +80,10 @@ module Lisp
   end
 end
 
-l = Lisp::Lexer.new
-p = Lisp::Parser.new
-l.tokenize("test.lisp", p)
-i = Lisp::Interpreter.new
-i.start p.node
+if __FILE__ == $0
+  l = Lisp::Lexer.new
+  p = Lisp::Parser.new
+  l.tokenize("test.lisp", p)
+  i = Lisp::Interpreter.new
+  i.start p.node
+end
