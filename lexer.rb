@@ -14,7 +14,7 @@ module Lisp
           parser << [:end]
         elsif number = s.scan(/\d+(\.\d+)?/)
           parser << [:number, number.to_f]
-        elsif atom = s.scan(/[a-zA-Z0-9+\/\-*]+/)
+        elsif atom = s.scan(/[a-zA-Z0-9]+/)
           parser << [:atom, atom.to_sym]
         else
           s.getch # consume rest
@@ -23,33 +23,23 @@ module Lisp
     end
   end
 
-  class List
-    attr_accessor :items, :parent
-  
-    def initialize(parent)
-      parent << self unless parent.nil?
-      @parent = parent
-      @items = []
-    end
-  
-    def <<(item)
-      @items << item
-    end
-  end
-
   class Parser
     attr_reader :node
     
     def initialize
-      @node = List.new(nil)
+      @stack = []
+      @node = []
     end
   
     def <<(token)
       case token.first
       when :begin
-        @node = List.new(@node)
+        tmp = []
+        @stack.push(@node)
+        @node << tmp
+        @node = tmp
       when :end
-        @node = @node.parent
+        @node = @stack.pop
       else # symbol = atom, number = float
         @node << token.last
       end
