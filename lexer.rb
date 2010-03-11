@@ -14,7 +14,7 @@ module Lisp
           parser << [:end]
         elsif number = s.scan(/\d+(\.\d+)?/)
           parser << [:number, number.to_f]
-        elsif atom = s.scan(/[a-zA-Z0-9]+/)
+        elsif atom = s.scan(/[^\s()]+/)
           parser << [:atom, atom.to_sym]
         else
           s.getch # consume rest
