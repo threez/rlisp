@@ -2,8 +2,8 @@ require "strscan"
 
 module Lisp
   class Lexer
-    def tokenize(path, parser)
-      s = StringScanner.new(File.read(path))
+    def tokenize(str, parser)
+      s = StringScanner.new(str)
     
       while (!s.eos?)
         if s.scan(/;;.*$/)

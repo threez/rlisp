@@ -22,7 +22,7 @@ module Lisp
     def import(file)
       lexer = Lisp::Lexer.new
       parser = Lisp::Parser.new
-      lexer.tokenize("stdlib/#{file}.lisp", parser)
+      lexer.tokenize(File.read("stdlib/#{file}.lisp"), parser)
       start(parser.node)
     end
     
@@ -41,6 +41,7 @@ module Lisp
         when :defun
           tmp, name, *rest = expr
           @functions[name] = rest
+          true
         when :quote
           tmp, *rest = expr
           rest
@@ -83,7 +84,7 @@ end
 if __FILE__ == $0
   l = Lisp::Lexer.new
   p = Lisp::Parser.new
-  l.tokenize("test.lisp", p)
+  l.tokenize(File.read("test.lisp"), p)
   i = Lisp::Interpreter.new
   i.start p.node
 end
