@@ -48,3 +48,25 @@
 (p (cond (> 1 2) (quote T) (quote ())))
 
 (print Hello World)
+
+; Sequenzielle Programmierung
+(p (prog (setq a (* 2 3)) (setq b (* 3 4)) (return (+ a b))))
+
+; weitere Tests
+
+(puts (+ (* 10 4) 2))
+(cond (< 10 42) (puts ja) (puts nein))
+(setq x 5)
+(p ((lambda (x) (* x x)) x))
+(label square (lambda (x) (* x x)))
+(p (square 5))
+(defun add (a b) (+ a b))
+(p (add 1 2))
+(p ((lambda (x) ((lambda (x) (* x x)) x)) 10))
+(setq a 20)
+(p ((lambda (x) ((lambda (x) (* a x)) x)) 10))
+(p xx)
+(setq a (* 2 3))
+(p (* a 4))
+(p (quote (+ 2 3 4)))
+(p (cons (list a b) (list c d)))
