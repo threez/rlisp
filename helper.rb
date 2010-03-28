@@ -1,19 +1,24 @@
 module Lisp
   module Core
-    def car(list)
-      list.first
-    end
-    
-    def cdr(list)
-      list.slice(1, list.size)
+    def atom(a)
+      !a.is_a? Array
     end
     
     def cons(a, list)
       [a, list]
     end
     
-    def atom(a)
-      !a.is_a?(Array)
+    def cdr(list)
+      tmp, *rest = list
+      rest
+    end
+    
+    def car(list)
+      list.first
+    end
+    
+    def list(*items)
+      items    
     end
   end
   
