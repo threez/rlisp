@@ -1,79 +1,141 @@
-require "lexer"
+require "parser"
 require "helper"
 
 module Lisp
+  class VariableScope
+    attr_accessor :parent
+    
+    def initialize(parent = nil)
+      @variables = {}
+      @parent_scope = parent
+    end
+    
+    def []=(variable_name, value)
+      @variables[variable_name] = value
+    end
+    
+    def [](variable_name)
+      if @variables.has_key? variable_name
+        @variables[variable_name]
+      elsif !@parent.nil?
+        @parent[variable_name]
+      else
+        variable_name
+      end
+    end
+  end
+  
+  class Lambda
+    attr_reader :scope, :body
+    
+    def initialize(variables, body)
+      @variables = variables
+      @body = body
+    end
+    
+    def args=(args)
+      @scope = VariableScope.new
+      for variable_name in @variables do
+        @scope[variable_name] = args.shift 
+      end
+    end
+  end
+  
   class Interpreter
-    include Core
     include Math
+    include Core
     
     def initialize
-      @functions = {}
-      @variables = {}
+      @current_scope = @global_variable_scope = VariableScope.new
+      @labels = {}
     end
     
-    def label(fn, expr)
-      @functions[fn] = @functions[expr]
+    def push_scope(scope)
+      scope.parent = @current_scope
+      @current_scope = scope
     end
     
-    def setq(name, value)
-      @variables[name] = value
+    def pop_scope
+      @current_scope = @current_scope.parent      
     end
-    
-    def import(file)
+
+    def import(path)
       lexer = Lisp::Lexer.new
       parser = Lisp::Parser.new
-      lexer.tokenize(File.read("stdlib/#{file}.lisp"), parser)
-      start(parser.node)
-    end
-    
-    def start(expressions)
-      expressions.each { |expr| eval(expr) }
+      path = (File.exist? path.to_s) ? path : "stdlib/#{path}.lisp"
+      lexer.tokenize(File.read(path), parser)
+      parser.node.each { |expr| eval(expr) }
     end
     
     def eval(expr)
       if expr.is_a? Array
-        case expr.first 
-        when :lambda  
-          tmp, *rest = expr
-          name = "lambda.#{Time.now.to_f}".gsub(".", "_").to_sym
-          @functions[name] = rest
-          name
-        when :defun
-          tmp, name, *rest = expr
-          @functions[name] = rest
-          true
-        when :quote
-          tmp, *rest = expr
-          rest
+        case expr.first
         when :cond
-          tmp, condition, l1, l2 = expr
-          eval(condition) ? eval(l1) : eval(l2)
+          # (cond (< 1 2) (1) (2))
+          tmp, cond_expr, lt, lf = expr
+          eval(cond_expr) ? eval(lt) : eval(lf)
+        when :lambda
+          # (lambda (x) (* x x))
+          tmp, arg, body = expr
+          Lambda.new(arg, body)
+        when :defun
+          # (defun square (x) (* x x))
+          tmp, fn, arg, body = expr
+          @labels[fn] = Lambda.new(arg, body)
+        when :quote  
+          tmp, quoted = expr
+          quoted
+        when :label
+          # (label blah (lambda (x) (* x x)))
+          tmp, fn, the_lambda = expr
+          @labels[fn] = eval(the_lambda)
+        when :setq
+          # (setq name value)
+          tmp, name, value = expr
+          @current_scope[name] = value
+        when :return
+          # (return value)
+          tmp, value = expr
+          @current_scope["RETURN"] = eval(value)
+        when :prog
+          # (prog (exp1) (exp2) ... (exprN))
+          tmp, *expressions = expr
+          program_scope = VariableScope.new
+          push_scope(program_scope)
+          expressions.each { |expr| eval(expr) }
+          evaled = program_scope["RETURN"]
+          pop_scope
+          evaled
         else
-          apply expr.map { |i| eval(i) }
+          e = expr.map do |i|
+            eval(i)
+          end
+          apply(e)
+        end
+      elsif expr.is_a? Symbol
+        value = @current_scope[expr]
+        if value.is_a? Array
+          eval(value)
+        else
+          value
         end
       else
-        @variables[expr] ? @variables[expr] : expr
-      end
-    end
-    
-    def replace(search_atom, new_atom, expr)
-      expr.map do |item|
-        if item.is_a? Array
-          replace(search_atom, new_atom, item)
-        else
-          (search_atom == item) ? new_atom : item
-        end
+        expr
       end
     end
     
     def apply(expr)
       fn, *rest = expr
-      if func = @functions[fn]
-        params, definition = func
-        params.each_with_index do |param, i|
-          definition = replace(param, rest[i], definition)
-        end
-        eval(definition)
+      
+      # search for lambda of function name
+      fn = @labels[fn] if @labels[fn]
+      
+      if fn.is_a? Lambda
+        fn.args = rest
+        push_scope(fn.scope)
+        evaled = eval(fn.body)
+        pop_scope
+        evaled
       else
         self.send(fn, *rest)
       end
@@ -82,9 +144,6 @@ module Lisp
 end
 
 if __FILE__ == $0
-  l = Lisp::Lexer.new
-  p = Lisp::Parser.new
-  l.tokenize(File.read("test.lisp"), p)
   i = Lisp::Interpreter.new
-  i.start p.node
+  i.import("test.lisp")
 end
