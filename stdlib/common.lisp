@@ -1,5 +1,9 @@
 ;; Bootstap functions
 
+(defmacro (defun) 
+  (defun name parameter expr)
+  (label name (lambda parameter expr)))
+
 (defun cadr (x) 
   (car (cdr x)))
   

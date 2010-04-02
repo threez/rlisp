@@ -70,3 +70,21 @@
 (p (* a 4))
 (p (quote (+ 2 3 4)))
 (p (cons (list a b) (list c d)))
+
+; tests macros
+
+(defmacro (print aa)
+  (print aa list)
+  (aa list))
+
+(defmacro (print bb)
+  (print bb list)
+  (bb list))
+
+(defun aa (list) (p fa list))
+
+(defun bb (list) (p fb list))
+
+(print aa (quote x y z))
+
+(print bb (quote x y z))

@@ -1,5 +1,6 @@
 require "parser"
 require "helper"
+require "macros"
 
 module Lisp
   class VariableScope
@@ -48,6 +49,7 @@ module Lisp
     def initialize
       @current_scope = @global_variable_scope = VariableScope.new
       @labels = {}
+      @matcher = PatternMatcher.new
     end
     
     def push_scope(scope)
@@ -78,10 +80,6 @@ module Lisp
           # (lambda (x) (* x x))
           tmp, arg, body = expr
           Lambda.new(arg, body)
-        when :defun
-          # (defun square (x) (* x x))
-          tmp, fn, arg, body = expr
-          @labels[fn] = Lambda.new(arg, body)
         when :quote  
           tmp, quoted = expr
           quoted
@@ -106,11 +104,19 @@ module Lisp
           evaled = program_scope["RETURN"]
           pop_scope
           evaled
+        when :defmacro
+          # (defmacro (keyword1 ... keywordN) (pattern) (transformation))
+          tmp, keywords, pattern, transformation = expr
+          @matcher.create_macro!(keywords, pattern, transformation)
         else
-          e = expr.map do |i|
-            eval(i)
+          if macro = @matcher[expr]
+            eval(macro.apply(expr))
+          else
+            e = expr.map do |i|
+              eval(i)
+            end
+            apply(e)
           end
-          apply(e)
         end
       elsif expr.is_a? Symbol
         value = @current_scope[expr]
