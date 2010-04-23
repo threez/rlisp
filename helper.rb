@@ -23,36 +23,15 @@ module Lisp
   end
   
   module Math
-    def +(a, b)
-      a + b
+    def math_process_list(method, list)
+      first, *rest = list
+      rest.inject(first || 0) { |sum, i| sum = sum.send(method, i) }
     end
     
-    def *(a, b)
-      a * b
-    end
-    
-    def /(a, b)
-      a / b
-    end
-    
-    def -(a, b)
-      a - b
-    end
-    
-    def %(a, b)
-      a % b
-    end
-    
-    def <(a, b)
-      a < b
-    end
-    
-    def >(a, b)
-      a > b
-    end
-    
-    def eq(a, b)
-      a == b
+    for sign in %w(+ - * / - % < > ==) do
+      eval("def #{sign}(*list)
+        math_process_list(:#{sign}, list)
+      end")
     end
   end
 end
