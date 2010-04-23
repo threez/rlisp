@@ -156,8 +156,3 @@ module Lisp
     end
   end
 end
-
-if __FILE__ == $0
-  i = Lisp::Interpreter.new
-  i.import("test.lisp")
-end

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe Lisp::Core do
   it "cons should construct a new list using an atom and a list" do

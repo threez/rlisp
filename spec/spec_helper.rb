@@ -1,7 +1,4 @@
-$LOAD_PATH.unshift(File.dirname(__FILE__) + "..")
-require 'lexer'
-require 'parser'
-require 'interpreter'
+require File.join(File.dirname(__FILE__), "..", "lib", "rlisp")
 
 def lisp_lex(str)
   lexer = Lisp::Lexer.new

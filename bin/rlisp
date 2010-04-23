@@ -1,4 +1,9 @@
-require 'interpreter'
+#!/usr/bin/ruby
+begin
+  require 'rlisp'
+rescue LoadError => ex
+  require File.dirname(__FILE__) + "/../lib/rlisp"
+end
 require 'readline'
 
 interpreter = Lisp::Interpreter.new

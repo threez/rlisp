@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe Lisp::Parser do
   it "should parse a empty list as emtpy array" do
