@@ -50,7 +50,7 @@
 (print Hello World)
 
 ; Sequenzielle Programmierung
-(p (prog (setq a (* 2 3)) (setq b (* 3 4)) (return (+ a b))))
+(p (prog (let a (* 2 3)) (let b (* 3 4)) (return (+ a b))))
 
 ; weitere Tests
 

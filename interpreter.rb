@@ -43,6 +43,8 @@ module Lisp
   end
   
   class Interpreter
+    RETURN_VALUE = :_prog_return_value
+    
     include Math
     include Core
     
@@ -90,24 +92,30 @@ module Lisp
         when :setq
           # (setq name value)
           tmp, name, value = expr
+          @global_variable_scope[name] = value
+        when :let
+          # (let name value)
+          tmp, name, value = expr
           @current_scope[name] = value
         when :return
           # (return value)
           tmp, value = expr
-          @current_scope["RETURN"] = eval(value)
+          @current_scope[RETURN_VALUE] = eval(value)
         when :prog
           # (prog (exp1) (exp2) ... (exprN))
           tmp, *expressions = expr
           program_scope = VariableScope.new
           push_scope(program_scope)
           expressions.each { |expr| eval(expr) }
-          evaled = program_scope["RETURN"]
+          evaled = program_scope[RETURN_VALUE]
           pop_scope
           evaled
         when :defmacro
           # (defmacro (keyword1 ... keywordN) (pattern) (transformation))
           tmp, keywords, pattern, transformation = expr
           @matcher.create_macro!(keywords, pattern, transformation)
+        when nil
+          false
         else
           if macro = @matcher[expr]
             eval(macro.apply(expr))
