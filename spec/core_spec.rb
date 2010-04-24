@@ -13,6 +13,7 @@ describe Lisp::Core do
     lisp_eval("(car (cons (cons a1 a2) b))").should == [[:a1, :a2]]
     lisp_eval("(car a)").should == [nil]
     lisp_eval("(car (cons a b))").should == [:a]
+    lisp_eval("(car (car (cons (cons a b) c)))").should == [:a]
   end
   
   it "cdr should return the rest of a cons" do

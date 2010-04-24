@@ -18,7 +18,8 @@ describe Lisp::Math do
     lisp_eval("(== 1 1)(== 1 1 1)(== 1 1 2)(== 2 1)").should == [
       true, true, false, false
     ]
-    lisp_eval("(< 1 2 3)(> 1 2)(< 1 2 0)").should == [true, false, false]
+    lisp_eval("(< 1 2 3)(> 1 2)(< 1 2 0)(> 3 2 1)").should == [true, false, false, true]
+    lisp_eval("(< 1 1)(> 1 1)").should == [false, false]
   end
   
   it "should should be able to check equality ot atoms" do

@@ -42,7 +42,7 @@ module Lisp
     def <(*list)
       first = list.shift
       for item in list
-        return false if first > item
+        return false if first >= item
       end 
       true
     end
@@ -50,7 +50,7 @@ module Lisp
     def >(*list)
       first = list.shift
       for item in list
-        return false if first < item
+        return false if first <= item
       end 
       true
     end
