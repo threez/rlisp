@@ -43,4 +43,11 @@ describe Lisp::Interpreter do
         (return (+ a b)))
       (cons a)").should == [10, 18, [10]]
   end
+  
+  it "should import the macros and caar's and cadr's from the stdlib dir" do
+    t1, t2, *rest = lisp_eval("(import common)
+    (defun t (a b) (+ a b))
+    (t 10 20)")
+    rest.should == [30]
+  end
 end
