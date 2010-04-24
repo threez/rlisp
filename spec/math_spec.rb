@@ -21,10 +21,10 @@ describe Lisp::Math do
     lisp_eval("(< 1 2 3)(> 1 2)(< 1 2 0)").should == [true, false, false]
   end
   
-  it "should should be able to check equality" do
+  it "should should be able to check equality ot atoms" do
     lisp_eval("(== a a)").should == [true]
     lisp_eval("(== a b)").should == [false]
-    lisp_eval("(== a (a b))").should == [nil]
-    lisp_eval("(== (a b) (a b))").should == [nil]
+    lisp_eval("(== a (cons a b))").should == [nil]
+    lisp_eval("(== (cons a b) (cons a b))").should == [nil]
   end
 end

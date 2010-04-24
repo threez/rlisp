@@ -1,11 +1,11 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe Lisp::Interpreter do
-  it "should eval a list to false" do
+  it "should eval a cons to false" do
     lisp_eval("()").should == [false]
   end
   
-  it "should be able to quote lists" do
+  it "should be able to quote conss" do
     lisp_eval("(quote (1 2 3))").should == [[1, 2, 3]]
   end
 
@@ -19,7 +19,7 @@ describe Lisp::Interpreter do
   end
   
   it "should be possible to branch with cond" do
-    lisp_eval("(cond (< 1 2) (setq a 1) (setq b 2)) (list a b)").should == [
+    lisp_eval("(cond (< 1 2) (setq a 1) (setq b 2)) (cons a b)").should == [
       1, [1.0, :b]
     ]
   end
@@ -41,6 +41,6 @@ describe Lisp::Interpreter do
         (let a (* 2 3)) 
         (let b (* 3 4)) 
         (return (+ a b)))
-      (list a)").should == [10, 18, [10]]
+      (cons a)").should == [10, 18, [10]]
   end
 end
