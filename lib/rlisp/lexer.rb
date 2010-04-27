@@ -8,6 +8,18 @@ module Lisp
       while (!s.eos?)
         if s.scan(/;;.*$/)
           # ignore comments
+        elsif s.scan(/"/)
+          string = ""
+          while (!s.eos?)
+            if s.scan(/\\"/)
+              string << '"'
+            elsif s.scan(/"/)
+              break
+            else
+              string << s.getch
+            end
+          end
+          parser << [:string, string]
         elsif s.scan(/\(/)
           parser << [:begin]  
         elsif s.scan(/\)/)

@@ -9,11 +9,13 @@ module Lisp
     end
     
     def cdr(list)
+      return list.slice(1, list.size) if list.is_a? String
       tmp, *rest = list
       rest.empty? ? nil : rest.first
     end
     
     def car(list)
+      return list.slice(0, 1) if list.is_a? String
       atom(list) ? nil : list.first
     end
   end

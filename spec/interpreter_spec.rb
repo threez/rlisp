@@ -50,4 +50,12 @@ describe Lisp::Interpreter do
     (t 10 20)")
     rest.should == [30]
   end
+  
+  it "should work on strings" do
+    lisp_eval('(+ "abc" "def")').should == ["abcdef"]
+    lisp_eval('(+ "abc" "def" "ghi")').should == ["abcdefghi"]
+    lisp_eval('(car "abc")').should == ["a"]
+    lisp_eval('(cdr "abc")').should == ["bc"]
+    lisp_eval('(setq q "blah")(+ q "blub")').should == ["blah", "blahblub"]
+  end
 end

@@ -63,4 +63,20 @@ describe Lisp::Lexer do
       [:end]
     ]
   end
+  
+  it "should lex strings" do
+    lisp_lex('(a b "blah blub")').should == [
+      [:begin], 
+        [:atom, :a], [:atom, :b], [:string, "blah blub"], 
+      [:end]
+    ]
+  end
+  
+  it "should lex strings with escapes" do
+    lisp_lex('(a b "blah\"\" \\ blub")').should == [
+      [:begin], 
+        [:atom, :a], [:atom, :b], [:string, "blah\"\" \\ blub"], 
+      [:end]
+    ]
+  end
 end

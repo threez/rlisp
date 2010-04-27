@@ -28,4 +28,10 @@ describe Lisp::Parser do
   it "should parse signs correctly" do
     lisp_parse("(+ 1 2)").should == [[:"+", 1.0, 2.0]]
   end
+  
+  it "should parse strings correctly" do
+    lisp_parse('(+ "abc" "def" "ghi\" \"jkm")').should == [
+      [:"+", "abc", "def", "ghi\" \"jkm"]
+    ]
+  end
 end
