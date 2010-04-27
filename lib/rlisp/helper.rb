@@ -18,6 +18,10 @@ module Lisp
       return list.slice(0, 1) if list.is_a? String
       atom(list) ? nil : list.first
     end
+    
+    def string(*list)
+      list.map { |i| i.to_s }.join
+    end
   end
   
   module Math
