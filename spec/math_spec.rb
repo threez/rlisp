@@ -30,4 +30,13 @@ describe Lisp::Math do
     lisp_eval("(== a (cons a b))").should == [nil]
     lisp_eval("(== (cons a b) (cons a b))").should == [nil]
   end
+  
+  it "should be able to distinguish between diffenrent floats" do
+    lisp_eval("(== -123 (* -1 123))").should == [true]
+    lisp_eval("(== 123 (+ 23 100))").should == [true]
+    lisp_eval("(== 123 123.0)").should == [true]
+    lisp_eval("(+ 1e3 1E3)").should == [2000]
+    lisp_eval("(+ 1E3 -1E3)").should == [0]
+    lisp_eval("(+ 1E-3 1e-3)").should == [0.002]
+  end
 end

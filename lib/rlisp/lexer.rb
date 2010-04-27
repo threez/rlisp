@@ -24,7 +24,7 @@ module Lisp
           parser << [:begin]  
         elsif s.scan(/\)/)
           parser << [:end]
-        elsif number = s.scan(/\d+(\.\d+)?/)
+        elsif number = s.scan(/[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?/)
           parser << [:number, number.to_f]
         elsif atom = s.scan(/[^\s()]+/)
           parser << [:atom, atom.to_sym]
